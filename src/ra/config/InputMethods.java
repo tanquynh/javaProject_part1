@@ -25,7 +25,7 @@ public static String getString() {
          try {
              return Integer.parseInt(getString());
          } catch (NumberFormatException exception) {
-             System.err.println("Dữ liệu nhập vào phải là 1 só: ");
+             System.err.println("Dữ liệu nhập vào phải là 1 số: ");
          }
         }
     }

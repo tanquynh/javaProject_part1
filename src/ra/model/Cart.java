@@ -1,6 +1,5 @@
 package ra.model;
 
-import java.io.Serializable;
 
 public class Cart extends Entity {
 
@@ -51,7 +50,5 @@ public class Cart extends Entity {
         this.quantity = quantity;
     }
 
-    public void display() {
-        System.out.println("Id : " + cartId + "- Sản phẩm " + product.getProductName() + " - Số lượng " + quantity + " - Giá " + product.getPrice() + "x" + quantity + "= " + (quantity * product.getPrice()));
-    }
+
 }

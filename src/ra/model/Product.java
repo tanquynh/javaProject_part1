@@ -74,8 +74,5 @@ public class Product extends Entity {
     public void setQuantity(int stock) {
         this.stock = stock;
     }
-    public void display() {
-        System.out.println("ID:" + this.id + " -ProductName: " + this.productName + " -Giá: " + this.price  + " -Trạng thái ẩn/hiện:" + (this.productStatus == true ? "UnHide" : "Hide")   );
-        System.out.println("|------------------------------------------------------|");
-    }
+
 }

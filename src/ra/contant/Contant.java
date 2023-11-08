@@ -1,7 +1,7 @@
-package ra.constant;
+package ra.contant;
 
 public class Contant {
-    public static final String ADMIN_CODE = "111111";
+    public static final String ADMIN_CODE = "68686868";
 
 
     public static class Role {
@@ -11,8 +11,8 @@ public class Contant {
     }
 
     public static class Status {
-        public static final boolean ACTIVE = true;
-        public static final boolean INACTIVE = false;
+        public static final boolean ONLINE = true;
+        public static final boolean OFFLINE = false;
     }
 
     public static class Importance {

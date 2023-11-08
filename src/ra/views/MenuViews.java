@@ -3,86 +3,65 @@ package ra.views;
 import ra.config.InputMethods;
 import ra.config.Validate;
 
-import ra.model.Cart;
-import ra.model.Category;
-import ra.model.Product;
-import ra.model.User;
-import ra.service.CartService;
-import ra.service.CategoryService;
-import ra.service.ProductService;
-import ra.service.UserService;
+import ra.model.*;
+import ra.service.*;
 
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 import static ra.config.ConsoleColor.*;
 import static ra.config.InputMethods.*;
-import static ra.constant.Contant.CategoryStatus.HIDE;
-import static ra.constant.Contant.ProductStatus.Hide;
-import static ra.constant.Contant.ProductStatus.UnHide;
+import static ra.config.Until.formatCurrency;
+import static ra.config.Until.formattedPhoneNumber;
+import static ra.contant.Contant.CategoryStatus.HIDE;
+import static ra.contant.Contant.ProductStatus.Hide;
+import static ra.contant.Contant.ProductStatus.UnHide;
 
-public class ProductViews {
+public class MenuViews {
     private CartView cartView;
     private ProductService productService;
     private CartService cartService;
     private CategoryService categoryService;
     private UserService userService;
+    private OrderService orderService;
     private UserViews userViews;
 
-    public ProductViews() {
+    public MenuViews() {
         this.cartView = new CartView();
         this.productService = new ProductService();
         this.cartService = new CartService();
         this.categoryService = new CategoryService();
         this.userService = new UserService();
+        this.orderService = new OrderService();
         this.userViews = new UserViews();
     }
 
-//    public CartView getCartView() {
-//        return cartView;
-//    }
-//
-//    public ProductService getProductService() {
-//        return productService;
-//    }
-//
-//    public CartService getCartService() {
-//        return cartService;
-//    }
-//
-//    public CategoryService getCategoryService() {
-//        return categoryService;
-//    }
-//
-//    public UserService getUserService() {
-//        return userService;
-//    }
-//
-//    public UserViews getUserViews() {
-//        return userViews;
-//    }
 
     public void displayUserMenuProduct() {
+
         int choice;
 
         do {
             print(BLUE);
-            System.out.println("╔═══════════════════════════════════════════════════╗");
-            System.out.println("║                😍🧡USER-PRODUCT😍😍              ║");
-            System.out.println("╟────────┬──────────────────────────────────────────║");
-            System.out.println("║   1    │    Tìm kiếm sản phẩm                     ║");
-            System.out.println("║   2    │    Hiển thị sản phẩm theo danh mục       ║");
-            System.out.println("║   3    │    Danh sách sản phẩm                    ║");
-            System.out.println("║   4    │    Hiển thị theo giá giảm dần            ║");
-            System.out.println("║   5    │    Thêm vào  giỏ hàng                    ║");
-            System.out.println("║   6    │    Giỏ hàng                              ║");
-            System.out.println("║   7    │    Quay lại menu trước                   ║");
-            System.out.println("║   8    │    Đăng xuất                             ║");
-            System.out.println("╚════════╧══════════════════════════════════════════╝");
-            System.out.println("Nhập vào lựa chọn của bạn 🧡🧡: ");
+
+            System.out.println(".-------------------------------------------------------------.");
+            System.out.println("| WELCOME USER : " + userService.userActive().getUsername() + "                                        |");
+            System.out.println("|-------------------------------------------------------------|");
+            System.out.println("|                 1. TÌM KIẾM SẢN PHẨM THEO TÊN               |");
+            System.out.println("|                 2. HIỂN THỊ SẢN PHẨM THEO DANH MỤC          |");
+            System.out.println("|                 3. DANH SÁCH SẢN PHẨM                       |");
+            System.out.println("|                 4. HIỂN THỊ THEO GIÁ GIẢM DẦN               |");
+            System.out.println("|                 5. THÊM VÀO GIỎ HÀNG                        |");
+            System.out.println("|                 6. GIỎ HÀNG                                 |");
+            System.out.println("|                 7. MY PROFILE                               |");
+            System.out.println("|                 0. ĐĂNG XUẤT                                |");
+            System.out.println("'-------------------------------------------------------------'\n");
             printFinish();
+            System.out.println("Nhập vào lựa chọn của bạn 🧡🧡: ");
             choice = getInteger();
 
             switch (choice) {
@@ -105,13 +84,13 @@ public class ProductViews {
                     new CartView().displayMenuCart();
                     break;
                 case 7:
-                    return;
-                case 8:
+                    MyAcount();
+                    break;
+                case 0:
                     new UserViews().logout();
                 default:
                     break;
             }
-
         } while (choice != 5);
     }
 
@@ -124,12 +103,23 @@ public class ProductViews {
         if (categories.isEmpty()) {
             System.err.println("Danh sách Category rỗng");
         } else {
-            System.out.println("Danh sách các Category có sẵn:");
-            for (Category category : categories) {
-                if (category.isCategoryStatus() != HIDE) {
-                    category.displayCategory();
+            print(GREEN);
+            System.out.println("\n                       DANH SÁCH CATEGORY               ");
+            System.out.println("|-------------------------------------------------------------|");
+            System.out.println("|" + "  ID  |       NAME        |      DESCRIPTION     |   STATUS " + " |");
+            System.out.println("|-------------------------------------------------------------|");
+
+            for (Category catalog : categories) {
+                if (catalog.isCategoryStatus() != HIDE) {
+
+
+                    System.out.printf("|%-5d | %-17s | %-20s | %-9s |%n",
+                            catalog.getId(), catalog.getCategoryName(), catalog.getCategoryDes(), (catalog.isCategoryStatus() ? "ĐANG BÁN" : "TẠM DỪNG"));
                 }
             }
+            System.out.println("|-------------------------------------------------------------|");
+            printFinish();
+
         }
 
         boolean categoryFound = false;
@@ -150,7 +140,6 @@ public class ProductViews {
                 System.err.println("ID không hợp lệ, mời nhập lại.");
             }
         }
-
         for (Product product : products) {
             if (product.getCategory().getId().equals(searchId)) {
                 if (product.isProductStatus() != Hide) {
@@ -160,13 +149,23 @@ public class ProductViews {
             }
         }
 
+
         if (findProducts.isEmpty()) {
             System.err.println("Không tìm thấy sản phẩm trong danh mục này.");
         } else {
-            System.out.println("Danh sách sản phẩm trong danh mục:");
+            print(GREEN);
+            System.out.println("\n                                           DANH SÁCH PRODUCT            ");
+            System.out.println("|----------------------------------------------------------------------------------------|");
+            System.out.println("|" + "  ID  |       NAME        |      DESCRIPTION     |     PRICE   |  CATEGORY  |   STATUS " + " |");
+            System.out.println("|----------------------------------------------------------------------------------------|");
             for (Product product : findProducts) {
-                product.display();
+                System.out.printf("|%-5d | %-17s | %-20s | %-10s| %-11s|%-11s|%n",
+                        product.getId(), product.getProductName(), product.getProductDes(), formatCurrency(product.getPrice()), product.getCategory().getCategoryName(), (product.isProductStatus() ? "ĐANG BÁN" : "TẠM DỪNG"));
+
             }
+
+            System.out.println("|----------------------------------------------------------------------------------------|");
+            printFinish();
         }
 
         return findProducts;
@@ -178,13 +177,23 @@ public class ProductViews {
             printlnError("Chưa có sản phẩm");
 
         }
-
         // Hiển thị danh sách sản phẩm
+
+        print(GREEN);
+        System.out.println("\n                                           DANH SÁCH PRODUCT            ");
+        System.out.println("|----------------------------------------------------------------------------------------|");
+        System.out.println("|" + "  ID  |       NAME        |      DESCRIPTION     |     PRICE   |  CATEGORY  |   STATUS " + " |");
+        System.out.println("|----------------------------------------------------------------------------------------|");
         for (Product product : products) {
             if (product.getCategory().isCategoryStatus() != HIDE && product.isProductStatus() != Hide) {
-                System.out.println("ID: " + product.getId() + ", Name: " + product.getProductName());
+                System.out.printf("|%-5d | %-17s | %-20s | %-10s| %-11s|%-11s|%n",
+                        product.getId(), product.getProductName(), product.getProductDes(), formatCurrency(product.getPrice()), product.getCategory().getCategoryName(), (product.isProductStatus() ? "ĐANG BÁN" : "TẠM DỪNG"));
+
             }
         }
+        System.out.println("|----------------------------------------------------------------------------------------|");
+        printFinish();
+
 
         System.out.println("Nhập vào ID sản phẩm để thêm vào giỏ hàng");
         int productId;
@@ -208,8 +217,9 @@ public class ProductViews {
         while (true) {
             System.out.println("Nhập vào số lượng muốn thêm vào giỏ hàng: ");
             int count = getInteger();
-
-            if (count > productService.findById(productId).getStock()) {
+            if (count <= 0) {
+                printlnError("Nhập số lượng sản phẩm lớn hơn 0");
+            } else if (count > productService.findById(productId).getStock()) {
                 printlnError("Số lượng này lớn hơn hàng chúng tôi có sẵn. Vui lòng giảm số lượng xuống.");
             } else {
                 cart.setQuantity(count);
@@ -219,40 +229,57 @@ public class ProductViews {
 
         // Lưu đối tượng Cart vào giỏ hàng
         cartService.save(cart);
-
         printlnSuccess("Thêm vào giỏ hàng thành công🎈🎈!!");
+        displayUserMenuProduct();
+
     }
 
 
     private void searchProduct() {
+
         List<Product> products = productService.getSerchProduct();
         if (products.isEmpty()) {
             System.out.println("Danh sách sản phẩm trống!!");
 
         } else {
-            System.out.println("Danh sách sản phẩm");
-            for (Product product : products
-            ) {
-                if (product.getCategory().isCategoryStatus() != HIDE && product.isProductStatus() != Hide) {
-                    product.display();
-                }
+            print(GREEN);
+            System.out.println("\n                                           DANH SÁCH PRODUCT            ");
+            System.out.println("|----------------------------------------------------------------------------------------|");
+            System.out.println("|" + "  ID  |       NAME        |      DESCRIPTION     |     PRICE   |  CATEGORY  |   STATUS " + " |");
+            System.out.println("|----------------------------------------------------------------------------------------|");
 
+            for (Product product : products) {
+                if (product.isProductStatus() != Hide && product.getCategory().isCategoryStatus() != HIDE) {
+                    System.out.printf("|%-5d | %-17s | %-20s | %-10s| %-11s|%-11s|%n",
+                            product.getId(), product.getProductName(), product.getProductDes(), formatCurrency(product.getPrice()), product.getCategory().getCategoryName(), (product.isProductStatus() ? "ĐANG BÁN" : "TẠM DỪNG"));
+                }
             }
+            System.out.println("|----------------------------------------------------------------------------------------|");
+            printFinish();
         }
     }
 
     private void displayProductList() {
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         List<Product> productList = productService.getProductList();
         if (productList.size() == 0) {
             System.out.println("Danh sách sản phẩm trống!!!");
         } else
-            System.out.println("Danh sách sản phẩm!!!");
+
+            print(GREEN);
+        System.out.println("\n                                        DANH SÁCH PRODUCT            ");
+        System.out.println("|----------------------------------------------------------------------------------------|");
+        System.out.println("|" + "  ID  |       NAME        |      DESCRIPTION     |     PRICE   |  CATEGORY  |   STATUS " + " |");
+        System.out.println("|----------------------------------------------------------------------------------------|");
+
         for (Product product : productList) {
             if (product.isProductStatus() != Hide && product.getCategory().isCategoryStatus() != HIDE) {
-                product.display();
+                System.out.printf("|%-5d | %-17s | %-20s | %-10s| %-11s|%-11s|%n",
+                        product.getId(), product.getProductName(), product.getProductDes(), formatCurrency(product.getPrice()), product.getCategory().getCategoryName(), (product.isProductStatus() ? "ĐANG BÁN" : "TẠM DỪNG"));
             }
         }
-//
+        System.out.println("|----------------------------------------------------------------------------------------|");
+        printFinish();
     }
 
     private void SortProduct() {
@@ -260,13 +287,21 @@ public class ProductViews {
         if (sortProduct.isEmpty()) {
             System.out.println("Danh sách rỗng !!!");
         } else {
-            System.out.println("Danh sách đã được sắp xếp theo giá:");
+            print(GREEN);
+            System.out.println("\n                      DANH SÁCH PRODUCT SẮP XẾP THEO GIÁ GIẢM DẦN           ");
+            System.out.println("|----------------------------------------------------------------------------------------|");
+            System.out.println("|" + "  ID  |       NAME        |      DESCRIPTION     |     PRICE   |  CATEGORY  |   STATUS " + " |");
+            System.out.println("|----------------------------------------------------------------------------------------|");
             for (Product product : sortProduct) {
                 if (product.isProductStatus() != Hide && product.getCategory().isCategoryStatus() != HIDE) {
-                    product.display();
+                    System.out.printf("|%-5d | %-17s | %-20s | %-10s| %-11s|%-11s|%n",
+                            product.getId(), product.getProductName(), product.getProductDes(), formatCurrency(product.getPrice()), product.getCategory().getCategoryName(), (product.isProductStatus() ? "ĐANG BÁN" : "TẠM DỪNG"));
                 }
 
             }
+
+            System.out.println("|----------------------------------------------------------------------------------------|");
+            printFinish();
         }
     }
 
@@ -275,15 +310,17 @@ public class ProductViews {
         do {
 
             print(BLUE);
-            System.out.println("╔═══════════════════════════════════════════╗");
-            System.out.println("║             😍🧡USER-ACOUNT😍😍          ║");
-            System.out.println("╟────────┬──────────────────────────────────╢");
-            System.out.println("║   1    │    Đổi mật khẩu                  ║");
-            System.out.println("║   2    │    Hiển thị thông tin cá nhân    ║");
-            System.out.println("║   3    │    Chỉnh sửa thông tin cá nhân   ║");
-            System.out.println("║   4    │    Quay lại menu trước           ║");
-            System.out.println("║   5    │    Đăng xuất                     ║");
-            System.out.println("╚════════╧══════════════════════════════════╝");
+
+            System.out.println(".--------------------------------------------------------.");
+            System.out.println("|                     MENU MY PROFILE                    |");
+            System.out.println("|--------------------------------------------------------|");
+            System.out.println("|                     1. ĐỔI MẬT KHẨU                    |");
+            System.out.println("|                     2. HIỂN THỊ THÔNG TIN              |");
+            System.out.println("|                     3. CHỈNH SỬA THÔNG TIN            |");
+            System.out.println("|                     4. QUAY LẠI MENU TRƯỚC             |");
+            System.out.println("|                     0. ĐĂNG XUẤT                       |");
+            System.out.println("'--------------------------------------------------------'\n");
+
             System.out.println("Nhập vào lựa chọn của bạn 🧡🧡: ");
             printFinish();
 
@@ -300,7 +337,7 @@ public class ProductViews {
                     break;
                 case 4:
                     return;
-                case 5:
+                case 0:
                     new UserViews().logout();
                     break;
                 default:
@@ -424,10 +461,21 @@ public class ProductViews {
     }
 
     private void showInforUser() {
-        System.out.println("THÔNG TIN USER");
+
         int userId = (int) userService.userActive().getId();
         User user = userService.findById(userId);
-        user.display();
+        print(GREEN);
+        System.out.println("\n                                                   THÔNG TIN USER                  ");
+        System.out.println("|------------------------------------------------------------------------------------------------------------------------------|");
+        System.out.println("|" + "  ID  |   NAME  |       EMAIL      |     PHONE    |    ĐỊA CHỈ   |   STATUS  |  ROLE | IMPORTANCE |  CREATE AT  |   UPDATE AT " + "|");
+        System.out.println("|------------------------------------------------------------------------------------------------------------------------------|");
+
+        System.out.printf("|%-5d | %-7s | %-16s | %-12s | %-12s | %-9s | %-5s | %-10s | %-11s | %-11s |%n",
+                user.getId(), user.getUsername(), user.getEmail(), formattedPhoneNumber(user.getPhone()), user.getAddress(), (user.isStatus() ? "ONLINE" : "OFFLINE"), (user.getRole() == 1 ? "ADMIN" : "USER"), user.isImportance() ? "OPEN" : "BLOCK", user.getCreateAt(), (user.getUpdateAt()) == null ? "Chưa cập nhật" : user.getUpdateAt());
+
+        System.out.println("|------------------------------------------------------------------------------------------------------------------------------|");
+        printFinish();
+
     }
 
     private void changePassword() {
@@ -463,18 +511,20 @@ public class ProductViews {
         do {
 
             print(BLUE);
-            System.out.println("╔══════════════════════════════════════╗");
-            System.out.println("║          😍🧡ADMIN-PRODUCT😍😍      ║");
-            System.out.println("╟────────┬─────────────────────────────╢");
-            System.out.println("║   1    │    Thêm mới sản phẩm        ║");
-            System.out.println("║   2    │    Hiển thị ds sản phẩm     ║");
-            System.out.println("║   3    │    Sửa sản phẩm             ║");
-            System.out.println("║   4    │    Ẩn sản phẩm theo mã      ║");
-            System.out.println("║   5    │    Ẩn nhiều sản phẩm        ║");
-            System.out.println("║   6    │    Tìm kiếm sản phẩm        ║");
-            System.out.println("║   7    │    Quay lại menu trước      ║");
-            System.out.println("║   8    │    Đăng xuất                ║");
-            System.out.println("╚════════╧═════════════════════════════╝");
+
+            System.out.println(".--------------------------------------------------------.");
+            System.out.println("| WELCOME ADMIN : " + userService.userActive().getUsername() + "                                  |");
+            System.out.println("|--------------------------------------------------------|");
+            System.out.println("|                     1. THÊM MỚI SẢN PHẨM               |");
+            System.out.println("|                     2. HIỂN THỊ DANH SÁCH SẢN PHẨM     |");
+            System.out.println("|                     3. CHỈNH SỬA THÔNG TIN SẢN PHẨM    |");
+            System.out.println("|                     4. ẨN / HIỆN SẢN PHẨM              |");
+            System.out.println("|                     5. ẨN / HIỆN NHIỀU SẢN PHẨM        |");
+            System.out.println("|                     6. TÌM KIẾM SẢN PHẨM               |");
+            System.out.println("|                     7. QUAY LẠI MENNU TRƯỚC            |");
+            System.out.println("|                     0. ĐĂNG XUẤT                       |");
+            System.out.println("'--------------------------------------------------------'\n");
+
             System.out.println("Nhập vào lựa chọn của bạn 🧡🧡: ");
             printFinish();
 
@@ -496,11 +546,11 @@ public class ProductViews {
                     hideAllProduct();
                     break;
                 case 6:
-                    searchProduct();
+                    searchProductByName();
                     break;
                 case 7:
                     return;
-                case 8:
+                case 0:
                     new UserViews().logout();
                     break;
                 default:
@@ -512,38 +562,61 @@ public class ProductViews {
 
     private void displayProducts() {
         List<Product> productList = productService.getProductList();
-        if (productList.size() == 0) {
-            System.out.println("Danh sách sản phẩm trống!!!");
-        } else
-            System.out.println("Danh sách sản phẩm!!!");
-        for (Product product : productList) {
+        if (productList.isEmpty()) {
+            System.err.println("Danh sách sản phẩm trống!!!");
+        } else {
 
-            product.display();
+            print(GREEN);
+            System.out.println("                                        DANH SÁCH PRODUCT            ");
+            System.out.println("|-----------------------------------------------------------------------------------------------------|");
+            System.out.println("|" + "  ID  |       NAME        |      DESCRIPTION     |   STOCK  |      PRICE    |   CATEGORY  |  STATUS " + " |");
+            System.out.println("|-----------------------------------------------------------------------------------------------------|");
 
+            for (Product product : productList) {
+                System.out.printf("|%-5d | %-17s | %-20s | %-8s| %-14s| %-12s| %-9s |%n",
+                        product.getId(), product.getProductName(), product.getProductDes(), product.getStock(), formatCurrency(product.getPrice()), product.getCategory().getCategoryName(), (product.isProductStatus() ? "ĐANG BÁN" : "TẠM DỪNG"));
+            }
+            System.out.println("|-----------------------------------------------------------------------------------------------------|");
+            printFinish();
         }
-//
     }
 
     private void hideProduct() {
+        List<User> users = userService.findAll();
+        boolean isChange = false;
+
         System.out.println("Hãy nhập id sản phẩm bạn muốn thay đổi trạng thái:");
         int idProduct = getInteger();
         Product product = productService.findById(idProduct);
         if (product == null) {
             printlnError("Không tìm thấy sản phẩm bạn muốn đổi trạng thái !!");
         } else {
+            for (User user : users
+            ) {
+                for (Cart cart : user.getCart()) {
+                    if (cart.getProduct().getId().equals(idProduct)) {
+                        isChange = true;
+                    }
+                }
+            }
+            if (isChange) {
+                printlnError("Sản phẩm có trong giỏ hàng, nên không thể ẩn sản phẩm");
 
-            productService.updateProductStatus((product.isProductStatus() == Hide ? UnHide : Hide), idProduct);
+            } else {
+                productService.updateProductStatus((product.isProductStatus() == Hide ? UnHide : Hide), idProduct);
 
-            printlnSuccess("Thay đổi trạng thái thành công!");
+                printlnSuccess("Thay đổi trạng thái thành công!");
+            }
+
         }
     }
 
 
     private void hideAllProduct() {
-//        List<Product> products = productService.findAll();
+        List<User> users = userService.findAll();
         System.out.println("Nhập danh sách mã sản phẩm cần ẩn/hiện (cách nhau bằng dấu phẩy):");
         String inputIds = scanner().nextLine();
-        // Tách danh sách mã danh mục thành mảng các ID
+        // Tách danh sách mã sản phẩm thành mảng các ID
         String[] idStrings = inputIds.split(",");
         boolean anyChanges = false;
 
@@ -554,24 +627,37 @@ public class ProductViews {
 
                 if (product == null) {
                     System.err.println("ID " + idProduct + " không tồn tại.");
-
-
                 } else {
-                    boolean newStatus = (product.isProductStatus() == Hide) ? UnHide : Hide;
-                    productService.updateProductStatus(newStatus, idProduct);
-                    anyChanges = true;
+                    boolean isChange = false;
+                    for (User user : users) {
+                        for (Cart cart : user.getCart()) {
+                            if (cart.getProduct().getId().equals(idProduct)) {
+                                isChange = true;
+                                break;  // Thoát khỏi vòng lặp khi sản phẩm được tìm thấy trong giỏ hàng
+                            }
+                        }
+                        if (isChange) {
+                            System.err.println("ID sản phẩm: " + idProduct + " có trong giỏ hàng của người dùng " + user.getUsername() + ", nên không thể ẩn sản phẩm");
+                            break;  // Thoát khỏi vòng lặp người dùng khi sản phẩm được tìm thấy trong giỏ hàng
+                        }
+                    }
+                    if (!isChange) {
+                        boolean newStatus = (product.isProductStatus() == Hide) ? UnHide : Hide;
+                        productService.updateProductStatus(newStatus, idProduct);
+                        anyChanges = true;
+                        System.out.println("ID sản phẩm: " + idProduct + " Thay đổi trạng thái thành công!");
+                    }
                 }
             } catch (NumberFormatException e) {
                 System.err.println("Lỗi: " + idString + " không phải là một số nguyên hợp lệ.");
             }
         }
 
-        if (anyChanges) {
-            printlnSuccess("Thay đổi trạng thái thành công!");
-            // Lưu trạng thái của danh mục sau khi thay đổi
-
-        }
+//        if (anyChanges) {
+//            System.out.println("Các thay đổi trạng thái sản phẩm đã được áp dụng!");
+//        }
     }
+
 
     private void editProduct() {
         System.out.println("Nhập ID sản phẩm cần sửa: ");
@@ -667,28 +753,61 @@ public class ProductViews {
 
             System.out.println("Danh sách danh mục:");
             List<Category> categories = categoryService.findAll();
+
+            print(GREEN);
+            System.out.println("\n                    DANH SÁCH CATEGORY                 ");
+            System.out.println("|-------------------------------------------------------------|");
+            System.out.println("|" + "  ID  |       NAME        |      DESCRIPTION     |   STATUS " + " |");
+            System.out.println("|-------------------------------------------------------------|");
+
             for (Category category : categories) {
-                category.displayCategory();
+                System.out.printf("|%-5d | %-17s | %-20s | %-9s |%n",
+                        category.getId(), category.getCategoryName(), category.getCategoryDes(), (category.isCategoryStatus() ? "ĐANG BÁN" : "TẠM DỪNG"));
             }
+            System.out.println("|-------------------------------------------------------------|");
+            printFinish();
+
 
             System.out.println("Nhập ID danh mục mới (Enter để bỏ qua):");
             while (!isExit) {
-                int newCategoryId = getInteger();
-                if (newCategoryId == 0) {
+                String st = scanner().nextLine();
+                if (st.isEmpty()) {
                     break; // Người dùng bỏ qua việc nhập danh mục mới
-                } else {
+                } else if (st.matches("\\d+")) { // Kiểm tra xem chuỗi chỉ chứa chữ số
+                    int newCategoryId = Integer.parseInt(st);
                     Category newCategory = categoryService.findById(newCategoryId);
                     if (newCategory != null) {
+
+
                         productToEdit.setCategory(newCategory);
                         isExit = true; // Thoát khỏi vòng lặp sau khi nhập thành công ID danh mục
                     } else {
                         System.err.println("Danh mục không tồn tại. Mời nhập lại.");
                     }
+                } else {
+                    System.err.println("Hãy nhập một số nguyên hợp lệ.");
                 }
             }
 
             productService.save(productToEdit); // Cập nhật thông tin sản phẩm
             System.out.println("Sửa sản phẩm thành công");
+
+
+            List<User> users = userService.findAll();
+            for (User user : users
+            ) {
+                for (Cart cart : user.getCart()
+                ) {
+                    if ((int) cart.getProduct().getId() == id) {
+                        cart.setProduct(productToEdit);
+                    }
+                }
+            }
+            for (User user : users
+            ) {
+                userService.save(user);
+            }
+
         } else {
             System.err.println("Không tìm thấy sản phẩm cần sửa !!!");
         }
@@ -750,10 +869,19 @@ public class ProductViews {
                 return; // Thoát nếu không có danh mục
             }
 
-            System.out.println("Chọn danh mục cho sản phẩm:");
+            print(GREEN);
+            System.out.println("\n                    DANH SÁCH CATEGORY                 ");
+            System.out.println("|-------------------------------------------------------------|");
+            System.out.println("|" + "  ID  |       NAME        |      DESCRIPTION     |   STATUS " + " |");
+            System.out.println("|-------------------------------------------------------------|");
+
             for (Category category : categories) {
-                category.displayCategory();
+                System.out.printf("|%-5d | %-17s | %-20s | %-9s |%n",
+                        category.getId(), category.getCategoryName(), category.getCategoryDes(), (category.isCategoryStatus() ? "ĐANG BÁN" : "TẠM DỪNG"));
             }
+            System.out.println("|-------------------------------------------------------------|");
+            printFinish();
+//            System.out.println("Nhập id catagory :");
 
             while (true) {
                 System.out.println("Nhập id danh mục sản phẩm:");
@@ -779,6 +907,27 @@ public class ProductViews {
                     System.out.println("Id danh mục không tồn tại, mời nhập lại");
                 }
             }
+        }
+    }
+
+    private void searchProductByName() {
+        List<Product> products = productService.getSerchProduct();
+        if (products.isEmpty()) {
+            System.out.println("Danh sách sản phẩm trống!!");
+
+        } else {
+            print(GREEN);
+            System.out.println("                                        DANH SÁCH PRODUCT            ");
+            System.out.println("|-----------------------------------------------------------------------------------------------------|");
+            System.out.println("|" + "  ID  |       NAME        |      DESCRIPTION     |   STOCK  |      PRICE    |   CATEGORY  |   STATUS " + " |");
+            System.out.println("|-----------------------------------------------------------------------------------------------------|");
+
+            for (Product product : products) {
+                System.out.printf("|%-5d | %-17s | %-20s | %-8s| %-14s| %-12s| %-9s |%n",
+                        product.getId(), product.getProductName(), product.getProductDes(), formatCurrency(product.getPrice()), product.getCategory().getCategoryName(), (product.isProductStatus() ? "ĐANG BÁN" : "TẠM DỪNG"));
+            }
+            System.out.println("|-----------------------------------------------------------------------------------------------------|");
+            printFinish();
         }
     }
 

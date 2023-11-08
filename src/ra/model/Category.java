@@ -51,7 +51,5 @@ public class Category extends Entity {
     public void setCategoryStatus(boolean categoryStatus) {
         this.categoryStatus = categoryStatus;
     }
-    public  void displayCategory() {
-        System.out.println("Mã danh mục: " + this.id + " -- Tên danh mục: " + this.categoryName + " -- Trạng thái danh mục: " + (this.categoryStatus == true ? "UNHIDE" : "HIDE"));
-    }
+
 }

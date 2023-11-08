@@ -1,43 +1,37 @@
 package ra.model;
 
-import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ra.constant.OrderStatus.getStatusByCode;
+import static ra.contant.OrderStatus.getStatusByCode;
 
 public class Order extends Entity {
 //    private int id;
     private int idUser;
     private double total;
     private LocalDate buyDate;
+    private LocalDateTime confirmTime;
     private String receiver;
     private String numberPhone;
     private String address;
     private byte status = 0;
-    public static List<Cart> OrderDetail =new ArrayList<>();
+    public static List<Cart> orderDetail =new ArrayList<>();
 
     public Order() {}
 
-    public Order(Integer id, int idUser, double total, LocalDate buyDate, String receiver, String numberPhone, String address, byte status) {
-        this.id = id;
+    public Order(int idUser, double total, LocalDate buyDate, LocalDateTime confirmTime, String receiver, String numberPhone, String address, byte status, List<Cart> orderDetail) {
         this.idUser = idUser;
         this.total = total;
         this.buyDate = buyDate;
+        this.confirmTime = confirmTime;
         this.receiver = receiver;
         this.numberPhone = numberPhone;
         this.address = address;
         this.status = status;
+        this.orderDetail = orderDetail;
     }
-
-//    public int getId() {
-//        return id;
-//    }
-
-//    public void setId(int id) {
-//        this.id = id;
-//    }
 
     public int getIdUser() {
         return idUser;
@@ -61,6 +55,14 @@ public class Order extends Entity {
 
     public void setBuyDate(LocalDate buyDate) {
         this.buyDate = buyDate;
+    }
+
+    public LocalDateTime getConfirmTime() {
+        return confirmTime;
+    }
+
+    public void setConfirmTime(LocalDateTime confirmTime) {
+        this.confirmTime = confirmTime;
     }
 
     public String getReceiver() {
@@ -95,17 +97,14 @@ public class Order extends Entity {
         this.status = status;
     }
 
-    public static List<Cart> getOrderDetail() {
-        return OrderDetail;
+    public  List<Cart> getOrderDetail() {
+        return orderDetail;
     }
 
-    public static void setOrderDetail(List<Cart> orderDetail) {
-        OrderDetail = orderDetail;
+    public  void setOrderDetail(List<Cart> orderDetail) {
+       this.orderDetail = orderDetail;
     }
 
-    public void display(){
-        System.out.println("Id : " +id + " | Tên người nhận : "+receiver+ " |Số điện thoại : "+ numberPhone);
-        System.out.println("Địa chỉ" + this.address+"| Trạng thái :" + getStatusByCode(status));
 
-    }
+
 }

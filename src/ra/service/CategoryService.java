@@ -1,8 +1,7 @@
 package ra.service;
 
-import ra.constant.Contant;
+import ra.contant.Contant;
 import ra.model.Category;
-import ra.model.User;
 import ra.repository.FileRepo;
 
 import java.util.List;

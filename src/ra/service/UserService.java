@@ -1,6 +1,6 @@
 package ra.service;
 
-import ra.constant.Contant;
+import ra.contant.Contant;
 import ra.model.User;
 import ra.repository.FileRepo;
 
@@ -9,8 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static ra.constant.Contant.Status.ACTIVE;
-import static ra.constant.Contant.Status.INACTIVE;
+import static ra.contant.Contant.Status.*;
 
 
 public class UserService implements IShop<User> {
@@ -73,7 +72,8 @@ public class UserService implements IShop<User> {
                 save(user);
                 foundUser = true;
             }else {
-                user.setStatus(INACTIVE);
+                user.setStatus(OFFLINE);
+                save(user);
             }
         }
 

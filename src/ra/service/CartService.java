@@ -75,22 +75,23 @@ public class CartService implements IShop<Cart> {
         User user = userLogin();
         List<Cart> carts = user.getCart();
         carts.remove(index);
-        user.setCarts(carts);
-        for (Cart ca : carts
-        ) {
-            ca.display();
-        }
+        user.setCart(carts);
+//        for (Cart ca : carts
+//        ) {
+//            ca.display();
+//        }
         userService.save(user);
     }
 
     public void deleteAll() {
         User user = userLogin();
-        user.setCarts(new ArrayList<>());
+        user.setCart(new ArrayList<>());
         userService.save(user);
     }
 
 
     @Override
+
     public int findIndex(int id) {
         List<Cart> carts = findAll();
         for (int i = 0; i < carts.size(); i++) {
@@ -100,7 +101,15 @@ public class CartService implements IShop<Cart> {
         }
         return -1;
     }
-
+    public int findIndex1(int id) {
+        List<Cart> carts = findAll();
+        for (int i = 0; i < carts.size(); i++) {
+            if (carts.get(i).getCartId() == id) {
+                return i;
+            }
+        }
+        return -1;
+    }
     public int autoInc() {
         int max = 0;
         for (Cart cart : userLogin().getCart()) {

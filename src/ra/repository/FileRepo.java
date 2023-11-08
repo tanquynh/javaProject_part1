@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ra.constant.Contant.FilePath.COMMON_PATH;
+import static ra.contant.Contant.FilePath.COMMON_PATH;
 
 public class FileRepo<T extends Entity, ID extends Number> {
 

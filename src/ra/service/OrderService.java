@@ -1,6 +1,6 @@
 package ra.service;
 
-import ra.constant.Contant;
+import ra.contant.Contant;
 import ra.model.Order;
 import ra.repository.FileRepo;
 
@@ -10,6 +10,7 @@ import java.util.List;
 public class OrderService implements IShop<Order> {
     FileRepo<Order, Integer> orderFileRepo;
     private List<Order> orderList;
+
     public OrderService() {
         this.orderFileRepo = new FileRepo<>(Contant.FilePath.ORDER_FILE);
     }
@@ -38,8 +39,9 @@ public class OrderService implements IShop<Order> {
         return orderFileRepo.autoInc();
     }
     public List<Order> getOrdersByStatus(byte statusCode) {
+        List<Order> orderList1 = findAll();
         List<Order> filteredOrders = new ArrayList<>();
-        for (Order order : orderList) {
+        for (Order order : orderList1) {
             if (order.getStatus() == statusCode) {
                 filteredOrders.add(order);
             }

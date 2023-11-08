@@ -4,9 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ra.constant.Contant.Importance.OPEN;
-import static ra.constant.Contant.Role.ADMIN;
-import static ra.constant.Contant.Status.INACTIVE;
+import static ra.contant.Contant.Importance.OPEN;
+import static ra.contant.Contant.Status.OFFLINE;
 
 public class User extends Entity {
 //    private int id;
@@ -24,7 +23,7 @@ public class User extends Entity {
     private List<Cart> cart = new ArrayList<>();
 
     public User() {
-        status = INACTIVE;
+        status = OFFLINE;
         importance = OPEN;
     }
 
@@ -136,16 +135,11 @@ public class User extends Entity {
         return cart;
     }
 
-    public void setCarts(List<Cart> cart) {
+    public void setCart(List<Cart> cart) {
         this.cart = cart;
     }
 
-    public void display() {
-        System.out.println("ID:" + this.id + " -Username: " + this.username + " - Email: " + this.email);
-        System.out.println("Status: " + (this.status ? "ACTIVE" : "INACTIVE") + " - Role: " + (this.role == ADMIN ? "ADMIN" : "USER") + " -Trạng thái khóa/mở:" + (this.importance == OPEN ? "MỞ" : "KHÓA"));
-        System.out.println("Thời gian tạo: " + this.createAt + " -- Thời gian cập nhật: " +(this.updateAt == null ? "Chưa cập nhật" : this.updateAt) );
-        System.out.println("|------------------------------------------------------|");
-    }
+
 
 
 }
